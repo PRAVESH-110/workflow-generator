@@ -1,11 +1,9 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getPromptForStep } from '../utils/prompts.js';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
-const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+const MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
 
 export const runStep = async (
   step: string,
@@ -14,16 +12,13 @@ export const runStep = async (
   const { system, user } = getPromptForStep(step, inputText);
 
   try {
-    const response = await openai.chat.completions.create({
-      model: MODEL,
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: user },
-      ],
-      temperature: 0,
-    });
+    const model = genAI.getGenerativeModel({ model: MODEL });
+    const prompt = `${system}\n\n${user}`;
 
-    const output = response.choices[0]?.message?.content?.trim();
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const output = response.text()?.trim();
+
     if (!output) {
       throw new Error('Empty response from LLM');
     }
@@ -31,13 +26,15 @@ export const runStep = async (
     return output;
   } catch (error) {
     console.error(`LLM error for step ${step}:`, error);
-    throw new Error(`Failed to execute step ${step}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Failed to execute step ${step}: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 };
 
 export const checkLLMHealth = (): { configured: boolean; error?: string } => {
-  if (!process.env.OPENAI_API_KEY) {
-    return { configured: false, error: 'OPENAI_API_KEY not set' };
+  if (!process.env.GEMINI_API_KEY) {
+    return { configured: false, error: 'GEMINI_API_KEY not set' };
   }
   return { configured: true };
 };
