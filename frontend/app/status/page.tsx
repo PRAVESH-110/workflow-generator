@@ -25,7 +25,7 @@ export default function StatusPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">System Status</h1>
+          <h1 className="text-3xl font-bold text-gray-200">System Status</h1>
         </div>
         <Card>
           <CardContent className="py-12 text-center text-red-600">
@@ -53,14 +53,14 @@ export default function StatusPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">System Status</h1>
-        <p className="mt-2 text-gray-600">Backend, database, and LLM health checks</p>
+        <h1 className="text-3xl font-bold text-gray-200">System Status</h1>
+        <p className="mt-2 text-gray-200">Backend, database, and LLM health checks</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-gray-800">
               {health.backend === 'running' ? (
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
               ) : (
@@ -76,7 +76,7 @@ export default function StatusPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-gray-800">
               {health.database === 'connected' ? (
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
               ) : (
@@ -92,7 +92,7 @@ export default function StatusPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-gray-800">
               {health.llm === 'configured' ? (
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
               ) : (

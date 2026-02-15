@@ -40,13 +40,13 @@ export default function HistoryPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Run History</h1>
-        <p className="mt-2 text-gray-600">Last 5 workflow runs</p>
+        <h1 className="text-3xl font-bold text-gray-200">Run History</h1>
+        <p className="mt-2 text-gray-200">Last 5 workflow runs</p>
       </div>
 
       {runs.length === 0 ? (
         <Card>
-          <CardContent className="py-12 text-center text-gray-500">
+          <CardContent className="py-12 text-center text-gray-200">
             No workflow runs yet. Run a workflow from the builder page.
           </CardContent>
         </Card>
@@ -63,8 +63,8 @@ export default function HistoryPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700">Input:</h3>
-                  <div className="mt-1 rounded-md border border-gray-200 bg-gray-50 p-3 text-sm">
+                  <h3 className="text-sm font-medium text-black">Input:</h3>
+                  <div className="mt-1 rounded-md border border-gray-200 text-black bg-gray-50 p-3 text-sm">
                     {run.inputText}
                   </div>
                 </div>
@@ -81,7 +81,7 @@ export default function HistoryPage() {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700">Outputs:</h3>
+                  <h3 className="text-sm font-medium text-black">Outputs:</h3>
                   <div className="mt-2 space-y-3">
                     {run.outputs.map((output, idx) => (
                       <div key={idx} className="space-y-1">
@@ -91,7 +91,7 @@ export default function HistoryPage() {
                             {STEP_LABELS[output.step]}
                           </span>
                         </div>
-                        <div className="rounded-md border border-gray-200 bg-gray-50 p-3 text-sm">
+                        <div className="rounded-md border border-gray-200 bg-gray-50 p-3 text-sm text-black">
                           <pre className="whitespace-pre-wrap font-sans">
                             {output.outputText}
                           </pre>
