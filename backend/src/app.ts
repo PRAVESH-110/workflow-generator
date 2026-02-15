@@ -9,24 +9,24 @@ app.use(express.json());
 
 
 const allowedOrigins = [
-  "http://localhost:3000",
-  "https://checkmysite.vercel.app",
-  process.env.FRONTEND_URL // Add your production frontend URL here
+    "http://localhost:3000",
+    "https://workflow-generator-mu.vercel.app",
+    process.env.FRONTEND_URL // Add your production frontend URL here
 ].filter(Boolean); // Filter out undefined values
 
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
 
-    if (allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
-      callback(null, true);
-    } else {
-      console.log("Blocked by CORS:", origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
+        if (allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+            callback(null, true);
+        } else {
+            console.log("Blocked by CORS:", origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
 }));
 
 
