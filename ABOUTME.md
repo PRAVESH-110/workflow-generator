@@ -38,7 +38,7 @@ This project prioritizes:
 
 ### Backend Structure
 ```
-server/src/
+backend/src/
 ├── index.ts          # Entry point
 ├── app.ts            # Express app setup
 ├── config/           # Database config
@@ -52,7 +52,7 @@ server/src/
 
 ### Frontend Structure
 ```
-client/
+frontend/
 ├── app/              # Next.js App Router
 │   ├── page.tsx      # Main workflow builder
 │   ├── history/      # Run history page
