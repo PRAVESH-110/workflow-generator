@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { runWorkflow, type RunWorkflowRequest } from '@/lib/api';
 import { ArrowUp, ArrowDown, Play, Loader2, Sparkles, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { WorkflowLoader } from '@/components/WorkflowLoader';
+import { WarmupLoader } from '@/components/WarmupLoader';
 
 const STEP_LABELS: Record<string, string> = {
   clean_text: 'Clean Text',
@@ -24,6 +25,16 @@ export default function Home() {
   const [outputs, setOutputs] = useState<
     Array<{ step: string; outputText: string }>
   >([]);
+  const [isWarmingUp, setIsWarmingUp] = useState(false);
+  const [isServerWarmed, setIsServerWarmed] = useState(true);
+
+  // Check if server needs warming up on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const warmed = sessionStorage.getItem('serverWarmedUp') === 'true';
+      setIsServerWarmed(warmed);
+    }
+  }, []);
 
   const availableSteps = [
     'clean_text',
@@ -59,12 +70,15 @@ export default function Home() {
   const mutation = useMutation({
     mutationFn: (data: RunWorkflowRequest) => runWorkflow(data),
     onSuccess: (data) => {
+      setIsWarmingUp(false);
+      setIsServerWarmed(true);
       setOutputs(data.workflowRun.outputs);
       toast.success('Workflow completed successfully! 🎉', {
         description: `Processed ${data.workflowRun.outputs.length} steps`,
       });
     },
     onError: (error) => {
+      setIsWarmingUp(false);
       toast.error('Workflow failed', {
         description: error instanceof Error ? error.message : 'An unknown error occurred',
       });
@@ -74,12 +88,19 @@ export default function Home() {
   const handleRun = () => {
     if (!inputText.trim() || steps.length < 2) return;
     setOutputs([]);
+
+    // Show warmup loader if server hasn't been warmed up yet
+    if (!isServerWarmed) {
+      setIsWarmingUp(true);
+    }
+
     mutation.mutate({ inputText, steps });
   };
 
   return (
     <>
-      {mutation.isPending && <WorkflowLoader />}
+      {isWarmingUp && <WarmupLoader />}
+      {mutation.isPending && !isWarmingUp && <WorkflowLoader />}
       <div className="space-y-8">
         {/* Hero Section */}
         <div className="text-center space-y-4">

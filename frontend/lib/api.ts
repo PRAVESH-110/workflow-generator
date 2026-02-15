@@ -34,21 +34,58 @@ export interface HealthResponse {
   llmError?: string;
 }
 
+// Check if server needs warming up (first request in session)
+const isServerWarmedUp = () => {
+  if (typeof window === 'undefined') return true;
+  return sessionStorage.getItem('serverWarmedUp') === 'true';
+};
+
+const markServerAsWarmed = () => {
+  if (typeof window === 'undefined') return;
+  sessionStorage.setItem('serverWarmedUp', 'true');
+};
+
 export const runWorkflow = async (
   data: RunWorkflowRequest
 ): Promise<RunWorkflowResponse> => {
-  const response = await fetch(`${API_URL}/api/workflow/run`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
+  const isWarmedUp = isServerWarmedUp();
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to run workflow');
+  // Set a longer timeout for first request (cold start)
+  const timeoutDuration = isWarmedUp ? 30000 : 90000; // 30s normal, 90s for cold start
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
+
+  try {
+    const response = await fetch(`${API_URL}/api/workflow/run`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    // Mark server as warmed up after successful first request
+    if (!isWarmedUp) {
+      markServerAsWarmed();
+    }
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to run workflow');
+    }
+
+    return response.json();
+  } catch (error) {
+    clearTimeout(timeoutId);
+
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Request timed out. The server may be starting up. Please try again in a moment.');
+    }
+
+    throw error;
   }
-
-  return response.json();
 };
 
 export const getHistory = async (): Promise<HistoryResponse> => {
