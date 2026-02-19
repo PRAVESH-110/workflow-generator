@@ -30,8 +30,8 @@ A clean, review-friendly take-home project for building and running text process
 
 ```
 /
-├── client/          # Next.js frontend
-├── server/          # Express backend
+├── frontend/          # Next.js frontend
+├── backend/          # Express backend
 └── README.md
 ```
 
@@ -54,7 +54,7 @@ npm run install:all
 
 3. Set up environment variables:
 
-**Server** (`server/.env`):
+**Server** (`backend/.env`):
 ```
 PORT=3001
 MONGODB_URI=mongodb://localhost:27017/workflow-auto
@@ -62,7 +62,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 OPENAI_MODEL=gpt-4o-mini
 ```
 
-**Client** (`client/.env.local`):
+**Client** (`frontend/.env.local`):
 ```
 NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
@@ -73,12 +73,12 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 
 Terminal 1 - Backend:
 ```bash
-npm run dev:server
+npm run dev:backend
 ```
 
 Terminal 2 - Frontend:
 ```bash
-npm run dev:client
+npm run dev:frontend
 ```
 
 Visit `http://localhost:3000` to use the application.
