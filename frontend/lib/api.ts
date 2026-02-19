@@ -23,7 +23,7 @@ export interface RunWorkflowResponse {
 
 export interface HistoryResponse {
   success: boolean;
-  runs: WorkflowRun[];
+  runs: WorkflowRun[];        
 }
 
 export interface HealthResponse {
